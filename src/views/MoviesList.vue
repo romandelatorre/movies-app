@@ -1,55 +1,11 @@
 <template>
-  <NavBar @inputData="onInputData" />
-  <p>{{ text }}</p>
-  <div class="relative inline-block w-64">
-    <select
-      class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-      v-model="ratingQuery"
-      @change="searchMovies"
-    >
-      <option value="">Filter by rating</option>
-      <option v-for="rating in ratings" :key="rating" :value="rating">
-        {{ rating }}
-      </option>
-    </select>
-    <div
-      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white"
-    >
-      <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
-        <path
-          d="M14.707 7.293a1 1 0 0 0-1.414-1.414L10 9.586l-3.293-3.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0 0-1.414z"
-        />
-      </svg>
-    </div>
-  </div>
-  <div class="relative inline-block w-64">
-    <select
-      class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-      v-model="yearQuery"
-      @change="searchMovies"
-    >
-      <option value="">Filter by year</option>
-      <option v-for="year in years" :key="year" :value="year">
-        {{ year }}
-      </option>
-    </select>
-    <div
-      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white"
-    >
-      <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
-        <path
-          d="M14.707 7.293a1 1 0 0 0-1.414-1.414L10 9.586l-3.293-3.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0 0-1.414z"
-        />
-      </svg>
-    </div>
-  </div>
-  <button
-    class="bg-gray-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    @click="clearFilters"
-  >
-    Clear Filters
-  </button>
-
+  <NavBar @inputData="searchNavBarMovies" />
+  <FilterMovies
+    :options="selectOptions"
+    v-model="selectedOption"
+    @selected-option="updateSelectedOption"
+  />
+  <p>{{ selectedOption }}</p>
   <div class="flex justify-center items-center">
     <div v-if="loading">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
@@ -111,12 +67,14 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import NavBar from "@/components/NavBar";
+import FilterMovies from "@/components/FilterMovies";
 
 export default {
   components: {
     Swiper,
     SwiperSlide,
     NavBar,
+    FilterMovies,
   },
   setup() {
     return {
@@ -126,56 +84,51 @@ export default {
   data() {
     return {
       query: "",
-      yearQuery: "",
-      ratingQuery: "",
+      selectOptions: [
+        { label: "2023", value: "2023" },
+        { label: "2022", value: "2022" },
+        { label: "2021", value: "2021" },
+        { label: "2020", value: "2020" },
+        { label: "2019", value: "2019" },
+        { label: "2018", value: "2018" },
+        { label: "2017", value: "2017" },
+        { label: "2016", value: "2016" },
+        { label: "2015", value: "2015" },
+      ],
+      selectedOption: "",
     };
   },
   computed: {
     ...mapGetters(["movies", "loading", "error"]),
-    years() {
-      return [...new Set(this.movies.map((movie) => movie.release_year))];
-    },
-    ratings() {
-      return [...new Set(this.movies.map((movie) => movie.rating))];
-    },
+
     filteredMovies() {
       let filteredMovies = this.movies;
-      if (this.ratingQuery) {
-        filteredMovies = filteredMovies.filter(
-          (movie) =>
-            movie.rating.toLowerCase() === this.ratingQuery.toLowerCase()
-        );
-      }
-      if (this.yearQuery) {
-        filteredMovies = filteredMovies.filter(
-          (movie) => movie.year === parseInt(this.yearQuery)
-        );
-      }
-
       return filteredMovies;
     },
   },
   methods: {
-    ...mapActions(["fetchMovies", "searchMovies", "selectMovies"]),
+    ...mapActions([
+      "fetchMovies",
+      "searchMovies",
+      "selectMovies",
+      "searchMoviesByYear",
+    ]),
     handleMovieClick(movie) {
       this.selectMovies(movie);
       this.$router.push(`/movieDetail/${movie.id}`);
     },
-    onInputData(query) {
+    searchNavBarMovies(query) {
       this.query = query;
       !query.length ? this.$store.dispatch("fetchMovies") : this.searchMovies();
+    },
+    updateSelectedOption(newValue) {
+      this.selectedOption = newValue;
+      this.$store.dispatch("searchMoviesByYear", newValue);
     },
     searchMovies() {
       this.$store.dispatch("searchMovies", {
         query: this.query,
-        year: this.yearQuery,
-        rating: this.ratingQuery,
       });
-    },
-    clearFilters() {
-      this.ratingQuery = "";
-      this.yearQuery = "";
-      this.searchMovies();
     },
   },
   mounted() {

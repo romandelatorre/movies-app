@@ -1,7 +1,9 @@
 <template>
+  <NavBar @inputData="onInputData" />
+  <p>{{ text }}</p>
   <div class="relative inline-block w-64">
     <select
-      class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+      class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
       v-model="ratingQuery"
       @change="searchMovies"
     >
@@ -11,13 +13,9 @@
       </option>
     </select>
     <div
-      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white"
     >
-      <svg
-        class="fill-current h-4 w-4"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-      >
+      <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
         <path
           d="M14.707 7.293a1 1 0 0 0-1.414-1.414L10 9.586l-3.293-3.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0 0-1.414z"
         />
@@ -26,7 +24,7 @@
   </div>
   <div class="relative inline-block w-64">
     <select
-      class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+      class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
       v-model="yearQuery"
       @change="searchMovies"
     >
@@ -36,13 +34,9 @@
       </option>
     </select>
     <div
-      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white"
     >
-      <svg
-        class="fill-current h-4 w-4"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-      >
+      <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
         <path
           d="M14.707 7.293a1 1 0 0 0-1.414-1.414L10 9.586l-3.293-3.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0 0-1.414z"
         />
@@ -50,28 +44,12 @@
     </div>
   </div>
   <button
-    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    class="bg-gray-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
     @click="clearFilters"
   >
     Clear Filters
   </button>
 
-  <div class="relative">
-    <input
-      type="text"
-      v-model="query"
-      placeholder="Search for a movie"
-      class="w-full rounded bg-gray-200 focus:outline-none focus:shadow-outline px-4 py-2"
-      @keyup.enter="searchMovies"
-    />
-    <button class="absolute right-0 top-0 mt-3 mr-4" @click="searchMovies">
-      <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-        <path
-          d="M20 18.3l-5.1-5.1C15.6 11.2 16 9.7 16 8c0-4.4-3.6-8-8-8S0 3.6 0 8s3.6 8 8 8c1.7 0 3.2-.4 4.7-1.1l5.1 5.1c.2.2.4.3.6.3s.4-.1.6-.3c.3-.3.3-.8 0-1.1zM8 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"
-        />
-      </svg>
-    </button>
-  </div>
   <div class="flex justify-center items-center">
     <div v-if="loading">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
@@ -132,11 +110,13 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import NavBar from "@/components/NavBar";
 
 export default {
   components: {
     Swiper,
     SwiperSlide,
+    NavBar,
   },
   setup() {
     return {
@@ -180,6 +160,10 @@ export default {
     handleMovieClick(movie) {
       this.selectMovies(movie);
       this.$router.push(`/movieDetail/${movie.id}`);
+    },
+    onInputData(query) {
+      this.query = query;
+      !query.length ? this.$store.dispatch("fetchMovies") : this.searchMovies();
     },
     searchMovies() {
       this.$store.dispatch("searchMovies", {

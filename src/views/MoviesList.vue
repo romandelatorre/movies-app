@@ -72,47 +72,77 @@
       </svg>
     </button>
   </div>
-  <div v-if="loading">Loading...</div>
-  <div v-else-if="error">{{ error }}</div>
-  <div v-else>
-    <div
-      v-for="movie in filteredMovies"
-      :key="movie.id"
-      @click="handleMovieClick(movie)"
-      class="max-w-sm rounded overflow-hidden shadow-lg"
+  <div class="flex justify-center items-center">
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">{{ error }}</div>
+    <swiper
+      class="w-3/4"
+      :navigation="true"
+      :slidesPerView="3"
+      :spaceBetween="40"
+      :freeMode="true"
+      :loop="true"
+      :pagination="{
+        clickable: true,
+      }"
+      :modules="modules"
     >
-      <img class="w-full" :src="`${movie.image}`" alt="Movie poster" />
-      <div class="px-6 py-4">
-        <div class="font-bold text-xl mb-2">
-          {{ movie.title }} ({{ movie.year }})
+      <swiper-slide
+        v-for="movie in filteredMovies"
+        :key="movie.id"
+        @click="handleMovieClick(movie)"
+        class="rounded overflow-hidden shadow-lg"
+      >
+        <img class="w-full h-96" :src="`${movie.image}`" alt="Movie poster" />
+
+        <div class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">
+            {{ movie.title }} ({{ movie.year }})
+          </div>
+          <p class="text-gray-700 text-base">
+            {{ movie.overview.substring(0, 100) + "..." }}
+          </p>
         </div>
-        <p class="text-gray-700 text-base">
-          {{ movie.overview }}
-        </p>
-      </div>
-      <div class="px-6 pt-4 pb-2">
-        <span
-          class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-          >Action</span
-        >
-        <span
-          class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-          >Cars</span
-        >
-        <span
-          class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-          >Animated</span
-        >
-      </div>
-      <div class="font-bold text-l mb-2">Rating: {{ movie.rating }}</div>
-    </div>
+        <div class="px-6 pt-4 pb-2">
+          <span
+            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+            >Action</span
+          >
+          <span
+            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+            >Cars</span
+          >
+          <span
+            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+            >Animated</span
+          >
+        </div>
+        <div class="font-bold text-l mb-2">Rating: {{ movie.rating }}</div>
+      </swiper-slide>
+    </swiper>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { FreeMode, Pagination, Navigation } from "swiper";
+
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 export default {
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
+  setup() {
+    return {
+      modules: [FreeMode, Pagination, Navigation],
+    };
+  },
   data() {
     return {
       query: "",

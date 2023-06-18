@@ -1,5 +1,5 @@
 <template>
-  <NavBar @inputData="searchNavBarMovies" />
+  <NavBar :showButton="true" @inputData="searchNavBarMovies" />
   <FilterMovies
     :options="selectOptions"
     v-model="selectedOptionYear"

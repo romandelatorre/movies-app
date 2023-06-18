@@ -7,7 +7,6 @@ export default createStore({
     loading: false,
     error: null,
     selectedMovie: [],
-    selectedOption: "",
   },
   getters: {
     movies: (state) => state.movies,
@@ -16,9 +15,6 @@ export default createStore({
     error: (state) => state.error,
   },
   mutations: {
-    setSelectedOption(state, payload) {
-      state.selectedOption = payload;
-    },
     setSelectedMovie(state, movie) {
       state.selectedMovie = movie;
     },
@@ -41,7 +37,6 @@ export default createStore({
     },
     fetchMovies({ commit }) {
       commit("setLoading");
-
       axios
         .get(
           `https://api.themoviedb.org/3/movie/now_playing?api_key=4f44d17afd0023ff85f7855d3ce97fc7`
@@ -85,12 +80,11 @@ export default createStore({
           commit("setError", error.message);
         });
     },
-    searchMoviesByYear({ commit }, query) {
-      commit("setSelectedMovie", query);
+    filterMoviesBy({ commit }, queryValue) {
       commit("setLoading");
       axios
         .get(
-          `https://api.themoviedb.org/3/discover/movie?api_key=4f44d17afd0023ff85f7855d3ce97fc7&primary_release_year=${query}`
+          `https://api.themoviedb.org/3/discover/movie?api_key=4f44d17afd0023ff85f7855d3ce97fc7&sort_by=popularity.desc&with_genres=${queryValue?.selectedValueGenre}&primary_release_year=${queryValue?.selectedValueYear}`
         )
         .then((response) => {
           const dataResponse = response.data.results.map((movie) => ({

@@ -2,10 +2,9 @@
   <NavBar @inputData="searchNavBarMovies" />
   <FilterMovies
     :options="selectOptions"
-    v-model="selectedOption"
+    v-model="selectedOptionYear"
     @selected-option="updateSelectedOption"
   />
-  <p>{{ selectedOption }}</p>
   <div class="flex justify-center items-center">
     <div v-if="loading">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
@@ -84,18 +83,28 @@ export default {
   data() {
     return {
       query: "",
-      selectOptions: [
-        { label: "2023", value: "2023" },
-        { label: "2022", value: "2022" },
-        { label: "2021", value: "2021" },
-        { label: "2020", value: "2020" },
-        { label: "2019", value: "2019" },
-        { label: "2018", value: "2018" },
-        { label: "2017", value: "2017" },
-        { label: "2016", value: "2016" },
-        { label: "2015", value: "2015" },
-      ],
-      selectedOption: "",
+      selectOptions: {
+        year: [
+          { label: "2023", value: "2023" },
+          { label: "2022", value: "2022" },
+          { label: "2021", value: "2021" },
+          { label: "2020", value: "2020" },
+          { label: "2019", value: "2019" },
+          { label: "2018", value: "2018" },
+          { label: "2017", value: "2017" },
+          { label: "2016", value: "2016" },
+          { label: "2015", value: "2015" },
+        ],
+        genre: [
+          { label: "Accion", value: "28" },
+          { label: "Comedia", value: "35" },
+          { label: "Romance", value: "10749" },
+          { label: "Ficcion", value: "878" },
+          { label: "Terror", value: "27" },
+        ],
+      },
+      selectOptionGenre: "",
+      selectedOptionYear: "",
     };
   },
   computed: {
@@ -111,7 +120,7 @@ export default {
       "fetchMovies",
       "searchMovies",
       "selectMovies",
-      "searchMoviesByYear",
+      "filterMoviesBy",
     ]),
     handleMovieClick(movie) {
       this.selectMovies(movie);
@@ -121,9 +130,10 @@ export default {
       this.query = query;
       !query.length ? this.$store.dispatch("fetchMovies") : this.searchMovies();
     },
-    updateSelectedOption(newValue) {
-      this.selectedOption = newValue;
-      this.$store.dispatch("searchMoviesByYear", newValue);
+    updateSelectedOption(movies) {
+      this.selectedOptionYear = movies.year;
+      this.selectedGenre = movies.genre;
+      this.$store.dispatch("filterMoviesBy", movies.genre, movies.year);
     },
     searchMovies() {
       this.$store.dispatch("searchMovies", {

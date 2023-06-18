@@ -8,7 +8,7 @@
       <option disabled value="">Filter By Year</option>
       <option
         class="bg-gray-800"
-        v-for="option in options"
+        v-for="option in options.year"
         :key="option.value"
         :value="option.value"
       >
@@ -28,13 +28,13 @@
   <div class="relative inline-block w-64">
     <select
       class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-gray-700 focus:border-gray-500"
-      v-model="selectedValue"
+      v-model="selectedValueGenre"
       @change="searchMovies"
     >
-      <option disabled value="">Filter By Year</option>
+      <option disabled value="">Filter By Genre</option>
       <option
         class="bg-gray-800"
-        v-for="option in options"
+        v-for="option in options.genre"
         :key="option.value"
         :value="option.value"
       >
@@ -65,12 +65,19 @@ export default {
   data() {
     return {
       selectedValueYear: "",
+      selectedValueGenre: "",
     };
   },
   methods: {
     searchMovies() {
-      this.$emit("selected-option", this.selectedValueYear);
-      this.$store.dispatch("searchMoviesByYear", this.selectedValueYear);
+      this.$emit("selected-option", {
+        selectedValueGenre: this.selectedValueGenre,
+        selectedValueYear: this.selectedValueYear,
+      });
+      this.$store.dispatch("filterMoviesBy", {
+        selectedValueGenre: this.selectedValueGenre,
+        selectedValueYear: this.selectedValueYear,
+      });
     },
   },
 };

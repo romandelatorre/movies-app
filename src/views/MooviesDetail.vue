@@ -1,9 +1,5 @@
 <template>
   <NavBar :showButton="false" @inputData="searchNavBarMovies" />
-  <nav>
-    <router-link to="/">Back To Home</router-link>
-  </nav>
-
   <div class="flex justify-center items-center mx-auto max-w-4xl">
     <div
       class="flex flex-col md:flex-row bg-gray-100 rounded-lg p-4 w-full max-w-4xl"

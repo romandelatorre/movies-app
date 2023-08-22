@@ -1,7 +1,7 @@
 <template>
   <div class="relative inline-block w-64 my-8">
     <select
-      class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-gray-700 focus:border-gray-500"
+      class="block appearance-none w-full bg-slate-900 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-slate-900"
       v-model="selectedValueYear"
       @change="searchMovies"
     >
@@ -27,7 +27,7 @@
   </div>
   <div class="relative inline-block w-64">
     <select
-      class="block appearance-none w-full bg-gray-700 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-gray-700 focus:border-gray-500"
+      class="block appearance-none w-full bg-slate-900 border border-gray-200 text-white py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-slate-900"
       v-model="selectedValueGenre"
       @change="searchMovies"
     >

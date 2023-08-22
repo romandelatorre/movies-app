@@ -1,10 +1,10 @@
 <template>
-  <nav class="bg-white border-gray-200 dark:bg-gray-900">
+  <nav class="bg-slate-900">
     <div
       class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
     >
       <span
-        class="flex items-centerself-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+        class="flex items-centerself-center text-2xl font-semibold whitespace-nowrap text-white"
         >Movies App</span
       >
       <div v-if="showButton">
@@ -31,6 +31,7 @@
 
             <input
               type="text"
+              autocomplete="off"
               v-model="query"
               placeholder="Search for a movie"
               @input="searchMovies"

@@ -33,7 +33,25 @@ export default createStore({
   },
   actions: {
     selectMovies({ commit }, movie) {
-      commit("setSelectedMovie", movie);
+      axios
+        .get(
+          `https://api.themoviedb.org/3/movie/${movie.id}?api_key=4f44d17afd0023ff85f7855d3ce97fc7`
+        )
+        .then((response) => {
+          const dataResponse = {
+            id: response.data.id,
+            title: response.data.original_title,
+            image: `https://image.tmdb.org/t/p/w500${response.data.poster_path}`,
+            overview: response.data.overview,
+            year: response.data.release_date.substring(0, 4),
+            genre: response.data.genre_ids,
+            rating: response.data.vote_average,
+          };
+          commit("setSelectedMovie", dataResponse);
+        })
+        .catch((error) => {
+          commit("setError", error.message);
+        });
     },
     fetchMovies({ commit }) {
       commit("setLoading");

@@ -1,39 +1,25 @@
 <template>
   <NavBar :showButton="false" @inputData="searchNavBarMovies" />
-  <div class="flex justify-center items-center mx-auto max-w-4xl">
-    <div
-      class="flex flex-col md:flex-row bg-gray-100 rounded-lg p-4 w-full max-w-4xl"
-    >
-      <div class="md:w-1/2">
+  <div class="flex flex-row items-center justify-center h-[calc(100%-5rem)]">
+    <div class="flex flex-row w-2/4">
+      <div class="flex-none overflow-hidden">
         <img
           :src="`${selectedMovieData.image}`"
           alt="Imagen"
-          class="object-cover h-full w-full rounded-lg"
+          class="object-cover h-full w-full"
         />
       </div>
-      <div class="md:w-1/2 flex flex-col justify-between px-4 py-2">
-        <div>
+      <div
+        class="bg-slate-900 p-7 flex flex-col justify-center leading-normal text-white"
+      >
+        <div class="mb-8">
           <div class="px-6 py-4">
-            <div class="font-bold text-xl mb-2">
+            <div class="font-bold text-xl mb-10">
               {{ selectedMovieData.title }} ({{ selectedMovieData.year }})
             </div>
-            <p class="text-gray-700 text-base">
+            <p class="text-justify">
               {{ selectedMovieData.overview }}
             </p>
-          </div>
-          <div class="px-6 pt-4 pb-2">
-            <span
-              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-              >Action</span
-            >
-            <span
-              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-              >Cars</span
-            >
-            <span
-              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-              >Animated</span
-            >
           </div>
           <div class="font-bold text-l mb-2">
             Rating: {{ selectedMovieData.rating }}
@@ -45,7 +31,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import NavBar from "@/components/NavBar";
 
 export default {
@@ -57,6 +43,15 @@ export default {
     selectedMovieData() {
       return this.selectedMovie;
     },
+    movieId() {
+      return this.$route.params.id;
+    },
+  },
+  created() {
+    this.selectMovies({ id: this.movieId });
+  },
+  methods: {
+    ...mapActions(["selectMovies"]),
   },
 };
 </script>

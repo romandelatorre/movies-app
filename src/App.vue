@@ -9,5 +9,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: rgb(240 249 255);
+  height: 100vh;
 }
 </style>

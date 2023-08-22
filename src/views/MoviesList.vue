@@ -5,18 +5,22 @@
     v-model="selectedOptionYear"
     @selected-option="updateSelectedOption"
   />
-  <div class="flex justify-center items-center">
+  <div class="mt-5">
     <div v-if="loading">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
     <swiper
-      class="w-3/4"
-      :navigation="true"
+      class="max-w-screen-lg"
+      :effect="'coverflow'"
+      :grabCursor="true"
       :slidesPerView="3"
-      :spaceBetween="40"
+      :spaceBetween="30"
       :freeMode="true"
-      :loop="true"
-      :pagination="{
-        clickable: true,
+      :coverflowEffect="{
+        rotate: 50,
+        stretch: 0,
+        depth: 100,
+        modifier: 1,
+        slideShadows: true,
       }"
       :modules="modules"
     >
@@ -24,32 +28,19 @@
         v-for="movie in filteredMovies"
         :key="movie.id"
         @click="handleMovieClick(movie)"
-        class="rounded overflow-hidden shadow-lg"
+        class="rounded overflow-hidden shadow-lg bg-slate-900 text-white"
       >
-        <img class="w-full h-96" :src="`${movie.image}`" alt="Movie poster" />
+        <img :src="`${movie.image}`" alt="Movie poster" />
 
         <div class="px-6 py-4">
           <div class="font-bold text-xl mb-2">
             {{ movie.title }} ({{ movie.year }})
           </div>
-          <p class="text-gray-700 text-base">
-            {{ movie.overview.substring(0, 100) + "..." }}
+          <p class="line-clamp-2 -webkit-box">
+            {{ movie.overview }}
           </p>
         </div>
-        <div class="px-6 pt-4 pb-2">
-          <span
-            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >Action</span
-          >
-          <span
-            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >Cars</span
-          >
-          <span
-            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >Animated</span
-          >
-        </div>
+
         <div class="font-bold text-l mb-2">Rating: {{ movie.rating }}</div>
       </swiper-slide>
     </swiper>
@@ -59,7 +50,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { FreeMode, Pagination, Navigation } from "swiper";
+import { FreeMode, Pagination, Navigation, EffectCoverflow } from "swiper";
 
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -77,7 +68,7 @@ export default {
   },
   setup() {
     return {
-      modules: [FreeMode, Pagination, Navigation],
+      modules: [FreeMode, Pagination, Navigation, EffectCoverflow],
     };
   },
   data() {
@@ -123,7 +114,6 @@ export default {
       "filterMoviesBy",
     ]),
     handleMovieClick(movie) {
-      this.selectMovies(movie);
       this.$router.push(`/movieDetail/${movie.id}`);
     },
     searchNavBarMovies(query) {
@@ -133,7 +123,6 @@ export default {
     updateSelectedOption(movies) {
       this.selectedOptionYear = movies.year;
       this.selectedGenre = movies.genre;
-      this.$store.dispatch("filterMoviesBy", movies.genre, movies.year);
     },
     searchMovies() {
       this.$store.dispatch("searchMovies", {
